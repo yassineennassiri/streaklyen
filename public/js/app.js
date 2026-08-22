@@ -50,19 +50,46 @@ async function loadHabits(listEl, statusEl) {
       streakEl.className = 'habit-streak';
       streakEl.textContent = `${habit.streak} day streak`;
 
-      const statusLabelEl = document.createElement('span');
-      statusLabelEl.className = 'habit-status';
-      statusLabelEl.textContent = habit.completedToday ? 'Done' : 'Mark done';
+      const statusButtonEl = document.createElement('button');
+      statusButtonEl.type = 'button';
+      statusButtonEl.className = 'habit-status';
+      statusButtonEl.textContent = habit.completedToday ? 'Done' : 'Mark done';
+      statusButtonEl.addEventListener('click', () => {
+        toggleHabit(habit.id, habit.completedToday, statusButtonEl, listEl, statusEl);
+      });
 
       item.appendChild(nameEl);
       item.appendChild(streakEl);
-      item.appendChild(statusLabelEl);
+      item.appendChild(statusButtonEl);
       listEl.appendChild(item);
     });
   } catch (err) {
     if (statusEl) {
       statusEl.hidden = false;
       statusEl.textContent = err.message || 'Something went wrong loading habits.';
+    }
+  }
+}
+
+async function toggleHabit(habitId, completedToday, buttonEl, listEl, statusEl) {
+  buttonEl.disabled = true;
+
+  try {
+    const response = await fetch(`/api/habits/${habitId}/log`, {
+      method: completedToday ? 'DELETE' : 'POST',
+    });
+
+    if (!response.ok) {
+      const data = await response.json().catch(() => ({}));
+      throw new Error(data.error || 'Failed to update habit.');
+    }
+
+    await loadHabits(listEl, statusEl);
+  } catch (err) {
+    buttonEl.disabled = false;
+    if (statusEl) {
+      statusEl.hidden = false;
+      statusEl.textContent = err.message || 'Something went wrong updating the habit.';
     }
   }
 }
