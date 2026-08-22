@@ -1,5 +1,6 @@
 node_modules/
 .env
 /generated/prisma
+.agents/
 .windsurf/
 skills-lock.json
