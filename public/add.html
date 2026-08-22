@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Habit · Streaklyen</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <h1>Add a habit</h1>
+
+    <form id="add-habit-form" novalidate>
+        <label for="habit-name">Habit name</label>
+        <input type="text" id="habit-name" name="name" required autofocus>
+
+        <p id="form-error" role="alert" hidden></p>
+
+        <div>
+            <button type="submit">Add</button>
+            <button type="button" id="cancel-button">Cancel</button>
+        </div>
+    </form>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
