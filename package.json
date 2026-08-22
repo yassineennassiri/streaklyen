@@ -4,6 +4,7 @@
   "description": "A Minimal Habit Tracker. Build Habits. Don't Break the Chain",
   "main": "index.js",
   "scripts": {
+    "postinstall": "prisma generate",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
