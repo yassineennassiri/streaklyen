@@ -1,4 +1,73 @@
 document.addEventListener('DOMContentLoaded', () => {
+  const dateEl = document.getElementById('today-date');
+  const listEl = document.getElementById('habits-list');
+  const statusEl = document.getElementById('habits-status');
+
+  if (dateEl) {
+    dateEl.textContent = new Date().toLocaleDateString(undefined, {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+  }
+
+  if (listEl) {
+    loadHabits(listEl, statusEl);
+  }
+});
+
+async function loadHabits(listEl, statusEl) {
+  try {
+    const response = await fetch('/api/habits');
+    if (!response.ok) {
+      throw new Error('Failed to load habits.');
+    }
+
+    const habits = await response.json();
+
+    listEl.innerHTML = '';
+
+    if (habits.length === 0) {
+      if (statusEl) {
+        statusEl.textContent = 'No habits yet. Add one to get started.';
+      }
+      return;
+    }
+
+    if (statusEl) {
+      statusEl.hidden = true;
+    }
+
+    habits.forEach((habit) => {
+      const item = document.createElement('li');
+
+      const nameEl = document.createElement('span');
+      nameEl.className = 'habit-name';
+      nameEl.textContent = habit.name;
+
+      const streakEl = document.createElement('span');
+      streakEl.className = 'habit-streak';
+      streakEl.textContent = `${habit.streak} day streak`;
+
+      const statusLabelEl = document.createElement('span');
+      statusLabelEl.className = 'habit-status';
+      statusLabelEl.textContent = habit.completedToday ? 'Done' : 'Mark done';
+
+      item.appendChild(nameEl);
+      item.appendChild(streakEl);
+      item.appendChild(statusLabelEl);
+      listEl.appendChild(item);
+    });
+  } catch (err) {
+    if (statusEl) {
+      statusEl.hidden = false;
+      statusEl.textContent = err.message || 'Something went wrong loading habits.';
+    }
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('add-habit-form');
   if (!form) return;
 
