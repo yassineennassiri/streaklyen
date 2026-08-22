@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Habit · Streaklyen</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <a href="index.html">&larr; Back</a>
+        <h1 id="habit-name">Habit</h1>
+    </header>
+
+    <main>
+        <p id="habit-status" role="status">Loading habit…</p>
+
+        <div id="habit-detail" hidden>
+            <section id="habit-stats">
+                <p id="habit-streak"></p>
+                <p id="habit-last30"></p>
+                <p id="habit-created"></p>
+            </section>
+
+            <section id="habit-calendar">
+                <h2 id="calendar-month"></h2>
+                <div id="calendar-grid" class="calendar-grid"></div>
+            </section>
+
+            <button type="button" id="delete-habit-button">Delete habit</button>
+        </div>
+    </main>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
