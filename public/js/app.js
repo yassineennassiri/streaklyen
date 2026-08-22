@@ -17,6 +17,19 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+function updateProgress(completed, total) {
+  const countEl = document.getElementById('progress-count');
+  const fillEl = document.getElementById('progress-fill');
+
+  if (countEl) {
+    countEl.textContent = `${completed}/${total}`;
+  }
+
+  if (fillEl) {
+    fillEl.style.width = total > 0 ? `${(completed / total) * 100}%` : '0%';
+  }
+}
+
 async function loadHabits(listEl, statusEl) {
   try {
     const response = await fetch('/api/habits');
@@ -25,6 +38,8 @@ async function loadHabits(listEl, statusEl) {
     }
 
     const habits = await response.json();
+
+    updateProgress(habits.filter((habit) => habit.completedToday).length, habits.length);
 
     listEl.innerHTML = '';
 
@@ -41,6 +56,7 @@ async function loadHabits(listEl, statusEl) {
 
     habits.forEach((habit) => {
       const item = document.createElement('li');
+      item.className = habit.completedToday ? 'habit-item habit-item-completed' : 'habit-item';
 
       const nameEl = document.createElement('a');
       nameEl.className = 'habit-name';
@@ -59,8 +75,12 @@ async function loadHabits(listEl, statusEl) {
         toggleHabit(habit.id, habit.completedToday, statusButtonEl, listEl, statusEl);
       });
 
-      item.appendChild(nameEl);
-      item.appendChild(streakEl);
+      const infoEl = document.createElement('div');
+      infoEl.className = 'habit-info';
+      infoEl.appendChild(nameEl);
+      infoEl.appendChild(streakEl);
+
+      item.appendChild(infoEl);
       item.appendChild(statusButtonEl);
       listEl.appendChild(item);
     });

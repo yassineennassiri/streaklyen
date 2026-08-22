@@ -7,19 +7,30 @@
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <h1>Add a habit</h1>
+    <div class="brand-bar">
+        <a href="index.html" class="brand">
+            <span class="brand-mark" aria-hidden="true">&#10003;</span>
+            <span class="brand-name">Streaklyen</span>
+        </a>
+    </div>
 
-    <form id="add-habit-form" novalidate>
-        <label for="habit-name">Habit name</label>
-        <input type="text" id="habit-name" name="name" required autofocus>
+    <div class="page page-narrow">
+        <a href="index.html" class="back-link">&larr; Back</a>
+        <h1>Add a habit</h1>
+        <p class="page-subtitle">Give it a clear, doable name. You can check it off starting today.</p>
 
-        <p id="form-error" role="alert" hidden></p>
+        <form id="add-habit-form" class="form" novalidate>
+            <label for="habit-name">Habit name</label>
+            <input type="text" id="habit-name" name="name" placeholder="e.g. Read for 20 minutes" required autofocus>
 
-        <div>
-            <button type="submit">Add</button>
-            <button type="button" id="cancel-button">Cancel</button>
-        </div>
-    </form>
+            <p id="form-error" role="alert" hidden></p>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Add habit</button>
+                <button type="button" id="cancel-button" class="btn btn-secondary">Cancel</button>
+            </div>
+        </form>
+    </div>
 
     <script src="js/app.js"></script>
 </body>
