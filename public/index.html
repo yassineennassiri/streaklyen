@@ -7,16 +7,37 @@
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <header>
-        <p id="today-date"></p>
-        <h1>Today</h1>
-        <a href="add.html">Add habit</a>
-    </header>
+    <div class="brand-bar">
+        <a href="index.html" class="brand">
+            <span class="brand-mark" aria-hidden="true">&#10003;</span>
+            <span class="brand-name">Streaklyen</span>
+        </a>
+    </div>
 
-    <main>
-        <p id="habits-status" role="status">Loading habits…</p>
-        <ul id="habits-list"></ul>
-    </main>
+    <div class="page">
+        <header class="page-header">
+            <div>
+                <p id="today-date" class="page-date"></p>
+                <h1>Today</h1>
+            </div>
+            <a href="add.html" class="btn btn-primary btn-new-habit">+ New habit</a>
+        </header>
+
+        <main>
+            <div class="progress-card">
+                <div class="progress-card-row">
+                    <span>Progress today</span>
+                    <span id="progress-count">0/0</span>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+            </div>
+
+            <p id="habits-status" role="status">Loading habits…</p>
+            <ul id="habits-list" class="habit-list"></ul>
+        </main>
+    </div>
 
     <script src="js/app.js"></script>
 </body>
