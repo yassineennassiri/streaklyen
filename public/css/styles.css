@@ -1,0 +1,31 @@
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  max-width: 320px;
+}
+
+.calendar-day {
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+
+.calendar-day-empty {
+  border: none;
+}
+
+.calendar-day-completed {
+  background: #4caf50;
+  color: #fff;
+  border-color: #4caf50;
+}
+
+.calendar-day-today {
+  font-weight: bold;
+  outline: 2px solid #333;
+}

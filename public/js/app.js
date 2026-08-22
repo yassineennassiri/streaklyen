@@ -42,8 +42,9 @@ async function loadHabits(listEl, statusEl) {
     habits.forEach((habit) => {
       const item = document.createElement('li');
 
-      const nameEl = document.createElement('span');
+      const nameEl = document.createElement('a');
       nameEl.className = 'habit-name';
+      nameEl.href = `habit.html?id=${habit.id}`;
       nameEl.textContent = habit.name;
 
       const streakEl = document.createElement('span');
@@ -152,3 +153,128 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+  const statusEl = document.getElementById('habit-status');
+  const detailEl = document.getElementById('habit-detail');
+  if (!detailEl) return;
+
+  const habitId = new URLSearchParams(window.location.search).get('id');
+  const deleteButton = document.getElementById('delete-habit-button');
+
+  if (!habitId) {
+    statusEl.textContent = 'No habit specified.';
+    return;
+  }
+
+  loadHabitHistory(habitId, statusEl, detailEl);
+
+  deleteButton.addEventListener('click', () => {
+    deleteHabit(habitId, deleteButton, statusEl);
+  });
+});
+
+async function loadHabitHistory(habitId, statusEl, detailEl) {
+  try {
+    const response = await fetch(`/api/habits/${habitId}/history`);
+
+    if (response.status === 404) {
+      throw new Error('Habit not found.');
+    }
+
+    if (!response.ok) {
+      throw new Error('Failed to load habit.');
+    }
+
+    const habit = await response.json();
+    renderHabit(habit, detailEl);
+
+    statusEl.hidden = true;
+    detailEl.hidden = false;
+  } catch (err) {
+    statusEl.textContent = err.message || 'Something went wrong loading the habit.';
+  }
+}
+
+function renderHabit(habit, detailEl) {
+  document.title = `${habit.name} · Streaklyen`;
+  document.getElementById('habit-name').textContent = habit.name;
+  document.getElementById('habit-streak').textContent = `${habit.streak} day streak`;
+  document.getElementById('habit-last30').textContent = `${habit.last30DaysCount} completions in the last 30 days`;
+
+  const createdAt = new Date(habit.createdAt);
+  document.getElementById('habit-created').textContent = `Started ${createdAt.toLocaleDateString(undefined, {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  })}`;
+
+  renderCalendar(new Set(habit.logDates));
+}
+
+function renderCalendar(logDates) {
+  const monthEl = document.getElementById('calendar-month');
+  const gridEl = document.getElementById('calendar-grid');
+
+  const now = new Date();
+  const year = now.getUTCFullYear();
+  const month = now.getUTCMonth();
+
+  monthEl.textContent = now.toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
+
+  gridEl.innerHTML = '';
+
+  const firstDay = new Date(Date.UTC(year, month, 1));
+  const daysInMonth = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
+  const leadingBlanks = firstDay.getUTCDay();
+  const todayKey = dateKeyLocal(now);
+
+  for (let i = 0; i < leadingBlanks; i += 1) {
+    const blank = document.createElement('div');
+    blank.className = 'calendar-day calendar-day-empty';
+    gridEl.appendChild(blank);
+  }
+
+  for (let day = 1; day <= daysInMonth; day += 1) {
+    const key = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    const dayEl = document.createElement('div');
+    dayEl.className = 'calendar-day';
+    dayEl.textContent = String(day);
+
+    if (logDates.has(key)) {
+      dayEl.classList.add('calendar-day-completed');
+    }
+
+    if (key === todayKey) {
+      dayEl.classList.add('calendar-day-today');
+    }
+
+    gridEl.appendChild(dayEl);
+  }
+}
+
+function dateKeyLocal(date) {
+  return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, '0')}-${String(date.getUTCDate()).padStart(2, '0')}`;
+}
+
+async function deleteHabit(habitId, deleteButton, statusEl) {
+  const confirmed = window.confirm('Delete this habit? This cannot be undone.');
+  if (!confirmed) return;
+
+  deleteButton.disabled = true;
+
+  try {
+    const response = await fetch(`/api/habits/${habitId}`, { method: 'DELETE' });
+
+    if (!response.ok && response.status !== 404) {
+      const data = await response.json().catch(() => ({}));
+      throw new Error(data.error || 'Failed to delete habit.');
+    }
+
+    window.location.href = 'index.html';
+  } catch (err) {
+    deleteButton.disabled = false;
+    statusEl.hidden = false;
+    statusEl.textContent = err.message || 'Something went wrong deleting the habit.';
+  }
+}
